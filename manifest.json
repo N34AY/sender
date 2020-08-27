@@ -12,7 +12,7 @@
         {
           "matches": ["https://find-bride.com/*"],
           "js": [
-            "auth.js"
+            "main.js"
           ]
         }
       ],
