@@ -121,7 +121,7 @@ window.onload = function()
         }
         else {
             document.getElementById('message_status').innerHTML = 'Запущена';
-            alert('Рассылка запущена!');
+            //alert('Рассылка запущена!');
             start_message(invite, banned, limit);
         }
     };
@@ -144,15 +144,25 @@ window.onload = function()
 
 function send_message(id, text)
 {
-    console.log(id);
+    //console.log(id);
     var url = 'https://find-bride.com/chat/set_mess';
     var request = new XMLHttpRequest();
+    //request.timeout = 20000;
     var formData = new FormData();
     formData.append("w", "62");
     formData.append("correct_user", id);
     formData.append("text", text);
     formData.append("xsrf", "123");
     request.open( "POST", url, true );
+    request.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status >= 200 && this.status < 400) {
+                console.log('message delivered');
+            } else {
+                console.log('message deivery failed');
+            }
+        }
+    };
     request.send(formData);
     return console.log(request.status);
 
@@ -179,6 +189,15 @@ function get_mans(url, limit)
     var request = new XMLHttpRequest();
     url = url + limit;
     request.open( "POST", url, false );
+    request.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status >= 200 && this.status < 400) {
+                console.log('[Sender]: get mans success');
+            } else {
+                console.log('[Sender]: failed to get mans');
+            }
+        }
+    };
     request.send();
     return request.responseText;
 };
@@ -186,7 +205,7 @@ function get_mans(url, limit)
 function get_mans_value(url)
 {
     var request = new XMLHttpRequest();
-    request.open( "POST", url, false );
+    request.open( "POST", url, true );
     request.send();
     const page = document.createElement('div');
     page.innerHTML = request.responseText;
@@ -202,21 +221,35 @@ function start_message(invite, banned, limit)
     var carusel = page.getElementsByClassName('girl-like');
     var info_block = page.getElementsByClassName('info');
     console.log(info_block);
+    /**
     for(var i = 0; i < carusel.length; i++){
         var id = carusel[i].dataset.id;
         var name = info_block[i].textContent.split(', ', 1);
         var age = info_block[i].textContent.split(', ')[1];
         var text_man = invite.replace('{name}', name);
         var text = text_man.replace('{age}', age);
-        //console.log(name, age);
         if (banned.includes(id) == false) {
-            var g = 0;
-            while (g < 5000) {
-                console.log(g);
-                g++;
-            };
-            send_message(id, text);
-            //var run_message = setTimeout(send_message(id, text), 5000);
+            setTimeout(() => {
+                send_message(id, text);  
+            }, 20000);
+        }
+        else {
+            console.log('banned man');
+        }
+    };
+    */
+    var timer = 0;
+    for(var i = 0; i < carusel.length; i++){
+        var id = carusel[i].dataset.id;
+        var name = info_block[i].textContent.split(', ', 1);
+        var age = info_block[i].textContent.split(', ')[1];
+        var text_man = invite.replace('{name}', name);
+        var text = text_man.replace('{age}', age);
+        if (banned.includes(id) == false) {
+            timer = timer + 1300;
+            setTimeout(() => {
+                send_message(id, text);  
+            }, timer);
         }
         else {
             console.log('banned man');
@@ -244,13 +277,10 @@ function start_letter(invite, banned, limit)
         var text = text_man.replace('{age}', age);
         //console.log(name, age);
         if (banned.includes(id) == false) {
-            var g = 0;
-            while (g < 5000) {
-                console.log(g);
-                g++;
-                send_letter(id, text);
-            };
-            //var run_letters = setTimeout(send_letter(id, text), 5000);
+            timer = timer + 3000;
+            setTimeout(() => {
+                send_letter(id, invite);
+            }, timer);
         }
         else {
             console.log('banned man');
