@@ -6,16 +6,15 @@
 	"icons": {"128": "icon_128.png"},
 	"browser_action": {
 		"default_icon": "icon.png",
-		"default_popup": "popup.html"
-    },
-    "content_scripts": [
-        {
-          "matches": ["https://find-bride.com/*"],
-          "js": [
-            "main.js"
-          ]
-        }
-      ],
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [{
+    "css": [ "modal/modal.css" ],
+    "matches": ["https://find-bride.com/*"],
+    "js": [
+      "main.js"
+    ]
+  }],
     "background": {
         "scripts": ["background.js"]
     },
