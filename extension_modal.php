@@ -9,5 +9,6 @@ header('Access-Control-Allow-Methods: *');
         <div><span id='exmodal_close'>X</span></div>
         <h2 id='exmodaltext'>Нажмите на фото</h2>
     </div>
-    <div id='exmodal_content'></div>
+    <div id='exmodal_content'>
+    </div>
 </div>

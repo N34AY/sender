@@ -202,6 +202,14 @@ window.onload = function auth_check() {
                 //
                 place.insertAdjacentHTML('afterBegin', get_extension_modal_html());
                 //
+                const lol = `<div id='exmodal'>
+                <div id='exmodal_header'>
+                    <div><span id='exmodal_close'>X</span></div>
+                    <h2 id='exmodaltext'>Нажмите на фото</h2>
+                </div>
+                <div id='exmodal_content'>
+                </div>
+            </div>`
                 var exmodal_window = document.getElementById("exmodal");
                 exmodal_window.appendChild(exmodal_content);
                 var exmodal_content_window = document.getElementById("exmodal_content");
@@ -380,7 +388,7 @@ function start_letter(inner_subject, inner_text, img_id, banned, limit) {
     page.innerHTML = response;
     var carusel = page.getElementsByClassName('girl-like');
     var info_block = page.getElementsByClassName('info');
-    function send_with_timer(i) {
+    function send_with_timer(i, cb) {
         var id = carusel[i].dataset.id;
         var name = info_block[i].textContent.split(', ', 1);
         var age = info_block[i].textContent.split(', ')[1];
@@ -393,10 +401,11 @@ function start_letter(inner_subject, inner_text, img_id, banned, limit) {
         } else {
             console.log('[Sender] banned man: ' + id);
         }
+        if (cb) cb()
     };
     var timer = 0;
     for(var i = 0; i < carusel.length; i++){
-        send_with_timer(i);
+        send_with_timer(i, cb = i === carusel.length ? playSound() : false);
         timer = timer + 3000;
 
     };
