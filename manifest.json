@@ -12,11 +12,12 @@
     "css": [ "modal/modal.css" ],
     "matches": ["https://find-bride.com/*"],
     "js": [
-      "main.js"
+      "js/main.js",
+      "js/axios.min.js"
     ]
   }],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["js/background.js"]
     },
 	"permissions": ["activeTab"]
 }
