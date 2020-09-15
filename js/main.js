@@ -46,6 +46,33 @@ const auth_failed_window = `
 const messages_sound = new Audio("https://freesound.org/data/previews/337/337049_3232293-lq.mp3");
 const letters_sound = new Audio("https://freesound.org/data/previews/337/337049_3232293-lq.mp3");
 
+// backlist funcs
+function add_to_blacklist(mans) {
+    const user_id = localStorage.getItem('correct_id')
+    const json = JSON.stringify(mans)
+    const url = `https://n34ay.pp.ua/add_to_blacklist?user_id=${user_id}`
+    const options = { headers: { 'Content-Type': 'application/json' } }
+    axios.post(url, json, options)
+        .then(response => console.log('[Sender] mans was added to blacklist successfuly'))
+        .catch(error =>console.warn('[Sender] failed to add mans to blacklist'))
+}
+function remove_from_blacklist(mans) {
+    var user_id = localStorage.correct_id;
+    var json = JSON.stringify(mans);
+    axios.post('https://n34ay.pp.ua/remove_from_blacklist?user_id=' + user_id, json, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then((response) => {
+        if (response.data.status == 'success') {
+            console.log('[Sender] mans removed from backlist successfuly ');
+        } else {
+            console.warn('[Sender] failed to remove mans from blacklist');
+        }
+      });
+};
+
 // check auth function
 async function check_auth() {
     var id = localStorage.correct_id;
@@ -182,15 +209,13 @@ window.onload = async function main() {
         var banned_val = document.getElementById('banned_input').value;
         var limit = document.getElementById('limit_input').value;
         var banned = banned_val.split(',');
-        if (inner_text.length < 15) {
-            alert('Текст сообщения должен быть не менее 15 символов!');
-        } else if (limit.length == 0) {
-            alert('Введите количество итераций для рассылки сообщений!');
-        } else {
-            var time = new Date().toLocaleTimeString().slice(0,-3);
-            document.getElementById('message_status').innerHTML = 'Запущена в: ' + time;
-            document.getElementById('message_status').className = 'run';
-            start_message(inner_text, banned, limit);
+        if (inner_text.length < 15) alert('Текст сообщения должен быть не менее 15 символов!')
+        else if (limit.length == 0) alert('Введите количество итераций для рассылки сообщений!')
+        else {
+            var time = new Date().toLocaleTimeString().slice(0,-3)
+            document.getElementById('message_status').innerHTML = 'Запущена в: ' + time
+            document.getElementById('message_status').className = 'run'
+            start_message(inner_text, banned, limit)
         }
     };
     document.getElementById('send_letter_button').onclick = function() {
