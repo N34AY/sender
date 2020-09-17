@@ -1,20 +1,27 @@
 <?php
-if (!$_GET['user_id'] || !$_GET['mans']) {
+if (!$_GET['user_id'] {
     echo "failed";
 } else {
     $user_id = $_GET['user_id'];
-    $mans_json = $_GET['mans'];
-    $mans = var_dump($mans_json);
-    $ban_time = date("Y-m-d H:i:s");
     $link = mysqli_connect("185.86.76.146", "sender", "fuck67UP", "sender") or die("Ошибка " . mysqli_error($link));
-    $query = "INSERT INTO `black_list` (user_id, mans, ban_time) VALUES ($user_id, $mans, $ban_time)";
+    $query = "SELECT * FROM `black_list` WHERE `user_id` = $user_id";
     $response = mysqli_query($link, $query);
+    function create_mans_array($response) {
+        $mans = array();
+        $rows = mysqli_num_rows($response);
+        for ($i = 0; $i < $rows; $i++) { 
+            $row = mysqli_fetch_row($result);
+            array_push($mans, $row[1]);
+        }
+        return $mans;
+    };
     if ($response) {
         header("Status: 200");
         header('Content-Type: application/json');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: *');
-        $arr = array('status' => 'success');   
+        $mans_json = array(create_mans_array($response));
+        $arr = array('status' => 'success', 'mans' => $mans_json);   
         echo json_encode($arr);
     } else {
         header("Status: 200");
