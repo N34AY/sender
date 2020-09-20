@@ -9,7 +9,6 @@ const extension_window = `
     <p class='exlabel'>Введите инвайт</p>
     <input id='banned_input' type='text' placeholder='54635,3434,4344,54634...'>
     <p class='exlabel'>Черный список</p>
-    <input id='limit_input' type='number' min=0>
     <input id='start_button' value='Запуск' type='button'>
     <h5 id='messages_status'>Статус: <span id='message_status' class='sleep'>Не запущено</span></h5>
     <hr>
@@ -21,7 +20,6 @@ const extension_window = `
     <input id='banned_input_letters' type='text' placeholder='54635,3434,4344,54634...'>
     <p class='exlabel'>Черный список</p>
     <input id='choose_photo_button' value='Выбрать фото' type='button'>
-    <input id='letters_limit_input' type='number' min=0>
     <input id='send_letter_button' value='Запуск' type='button'>
     <h5 id='letters_status'>Статус: <span id='letter_status'>Не запущено</span></h5>
     <img class='choosen_image' id='choosen_photo' data-id='none'>
@@ -68,8 +66,8 @@ function remove_from_blacklist(mans) {
 
 // check auth function
 async function check_auth() {
-    var id = localStorage.correct_id;
-    await axios.get('https://n34ay.pp.ua/auth_check?id=' + id)
+    const url = `https://n34ay.pp.ua/remove_from_blacklist?user_id=${localStorage.correct_id}`
+    await axios.get(url)
     .then((response) => {
         if (response.data.status == 'success') {
             console.log('[Sender] auth confirmed');
@@ -78,7 +76,7 @@ async function check_auth() {
             console.warn('[Sender] auth failed');
             display_auth_failed_info()
         }
-      });
+    });
 };
 
 // display extension window function
@@ -101,8 +99,6 @@ function display_auth_failed_info () {
 function update_mans_value (value) {
     var indicator = document.getElementById('online');
     indicator.innerHTML = value;
-    document.getElementById('limit_input').placeholder = value;
-    document.getElementById('letters_limit_input').placeholder = value;
 };
 function get_mans_online () {
     var request = new XMLHttpRequest();
@@ -167,7 +163,8 @@ function update_choosen_photo(img_link, img_id) {
 }
 
 window.onload = async function main() {
-    await check_auth();
+    //await check_auth();
+    display_find_extension();
     var exmodal_window = document.getElementById("exmodal");
     var exmodal_content_window = document.getElementById("exmodal_content");
     // onclick choose img button
@@ -200,39 +197,40 @@ window.onload = async function main() {
     document.getElementById('start_button').onclick = function() {
         var inner_text = document.getElementById('invite_input').value;
         var banned_val = document.getElementById('banned_input').value;
-        var limit = document.getElementById('limit_input').value;
         var banned = banned_val.split(',');
         if (inner_text.length < 15) alert('Текст сообщения должен быть не менее 15 символов!')
-        else if (limit.length == 0) alert('Введите количество итераций для рассылки сообщений!')
         else {
             var time = new Date().toLocaleTimeString().slice(0,-3)
             document.getElementById('message_status').innerHTML = 'Запущена в: ' + time
             document.getElementById('message_status').className = 'run'
-            start_message(inner_text, banned, limit)
+            start_message(inner_text, banned)
         }
     };
     document.getElementById('send_letter_button').onclick = function() {
         var inner_subject = document.getElementById('subject_input').value;
         var inner_text = document.getElementById('letter_input').value;
         var banned_val = document.getElementById('banned_input_letters').value;
-        var limit = document.getElementById('letters_limit_input').value;
         var banned = banned_val.split(',');
         var photo_id = document.getElementById('choosen_photo').dataset.id;
-        if (inner_subject.length < 5) {
-            alert('Тема письма должна быть не менее 5 символов!');
-        } else if (inner_text.length < 200 ) {
-            alert('Текст письма должен быть не менее 200 символов!');
-        } else if (limit.length == 0) {
-            alert('Введите количество итераций для рассылки писем!');
-        } else if (photo_id < 1) {
-            alert('Выберите фото для рассылки писем!');
-        } else {
+        console.log(typeof(photo_id));
+        if (inner_subject.length < 5) alert('Тема письма должна быть не менее 5 символов!')
+        else if (inner_text.length < 200 ) alert('Текст письма должен быть не менее 200 символов!')
+        else if (photo_id === 'none') alert('Выберите фото для рассылки писем!')
+        else {
             var time = new Date().toLocaleTimeString().slice(0,-3);
             document.getElementById('letters_status').innerHTML = 'Запущена в: ' + time;
             document.getElementById('letters_status').className = 'run';
-            start_letter(inner_subject, inner_text, photo_id, banned, limit);
+            start_letter(inner_subject, inner_text, photo_id, banned);
         }
     };   
+};
+
+// like man
+function like_man(id) {
+    const url = `https://find-bride.com/profile/addfriends/addMan/${id}?api=1`
+    axios.get(url)
+        .then(response => console.log('[Sender] like successs: ' + id))
+        .catch(error => console.warn('[Sender] like failed'))
 };
 
 // send finish function
@@ -247,9 +245,7 @@ function send_complete(type) {
         document.getElementById('letters_status').innerHTML = 'Завершена в: ' + time;
         document.getElementById('letters_status').className = 'finish';
     } 
-    else {
-        console.log('sound error');
-    }
+    else console.log('sound error');
 };
 
 // messages sender
@@ -264,7 +260,7 @@ function send_message(id, text) {
     request.open( "POST", url, true );
     request.send(formData);
 };
-function start_message(inner_text, banned, limit){
+function start_message(inner_text, banned){
     var mans_array = get_mans_online();
     function send_with_timer(i) {
         var id = mans_array[i].id;
@@ -272,18 +268,18 @@ function start_message(inner_text, banned, limit){
         var age = mans_array[i].e;
         var text_name = inner_text.replace('{name}', name);
         var text = text_name.replace('{age}', age);
-        if (banned.includes(id) == false) {
-            setTimeout(() => {send_message(id, text);}, timer);
-        } else {
-            console.log('[Sender] banned man: ' + id);
-        }
+        if (banned.includes(id) == false) setTimeout(() => {
+            send_message(id, text);
+            like_man(id);
+        }, timer)
+        else console.log('[Sender] banned man: ' + id)
     };
     var timer = 0;
-    for(var i = 0; i < limit; i++){
+    for(var i = 0; i < mans_array.length; i++){
         send_with_timer(i);
         timer = timer + 1300;
     };
-    time = (limit * 1.3) * 1000;
+    time = (mans_array.length * 1.3) * 1000;
     setTimeout(() => {send_complete('messages');}, time);
 };
 
@@ -326,7 +322,7 @@ function send_letter(id, subject, text, photo_id) {
     request.open( "POST", url, false );
     request.send(formData);
 };
-function start_letter(inner_subject, inner_text, photo_id, banned, limit) {
+function start_letter(inner_subject, inner_text, photo_id, banned) {
     var mans_array = get_mans_online();
     function send_with_timer(i) {
         var id = mans_array[i].id;
@@ -337,18 +333,17 @@ function start_letter(inner_subject, inner_text, photo_id, banned, limit) {
         var subject_name = inner_subject.replace('{name}', name);
         var subject = subject_name.replace('{age}', age);
         text = use_synonyms(text);
-        if (banned.includes(id) == false) {
-            setTimeout(() => {send_letter(id, subject, text, photo_id);}, timer);
-        } else {
-            console.log('[Sender] banned man: ' + id);
-        }
+        if (banned.includes(id) == false) setTimeout(() => {
+            send_letter(id, subject, text, photo_id);
+            like_man(id);
+        }, timer)
+        else console.log('[Sender] banned man: ' + id)
     };
     var timer = 0;
-    for(var i = 0; i < limit; i++){
+    for(var i = 0; i < mans_array.length; i++){
         send_with_timer(i);
         timer = timer + 3000;
-
     };
-    time = (limit * 1.3) * 1000;
+    time = (mans_array.length * 1.3) * 1000;
     setTimeout(() => {send_complete('letters');}, time);
 };

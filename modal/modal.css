@@ -51,7 +51,7 @@
     width: 60px;
 }
 #start_button {
-    width: 175px;
+    width: 240px;
 }
 #messages_status {
     width: 240px;
@@ -72,7 +72,7 @@
     width: 60px;
 }
 #send_letter_button{
-    width: 175px;
+    width: 240px;
 }
 .run{
     color: green;
