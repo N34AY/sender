@@ -12,6 +12,7 @@
     "css": [ "modal/modal.css" ],
     "matches": ["https://find-bride.com/*"],
     "js": [
+      "js/display.js",
       "js/main.js",
       "js/axios.min.js"
     ]
