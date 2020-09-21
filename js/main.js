@@ -1,7 +1,3 @@
-// main extension settings
-const messages_sound = new Audio("https://freesound.org/data/previews/337/337049_3232293-lq.mp3");
-const letters_sound = new Audio("https://freesound.org/data/previews/337/337049_3232293-lq.mp3");
-
 // backlist funcs
 function add_to_blacklist(mans) {
     const user_id = localStorage.getItem('correct_id')
@@ -84,7 +80,7 @@ function update_choosen_photo(img_link, img_id) {
 }
 
 window.onload = async function main() {
-    //await check_auth();
+    await check_auth();
     display_find_extension();
     // onclick choose img button
     document.getElementById('choose_photo_button').onclick = function () {
@@ -114,14 +110,7 @@ window.onload = async function main() {
     };
     // run sender
     document.getElementById('start_button').onclick = function() {
-        const options = {};
-        options.type = 'basic';
-        options.iconUrl = '';
-        options.title = 'title';
-        options.message = 'message';
-        options.contextMessage = 'content';
-        options.priority = 1;
-        chrome.runtime.sendMessage({id: "messend_start", nid: '1111', params: options});
+        Notifications.sendMessStartNotify;
         var inner_text = document.getElementById('invite_input').value;
         var banned_val = document.getElementById('banned_input').value;
         var banned = banned_val.split(',');
@@ -131,9 +120,11 @@ window.onload = async function main() {
             document.getElementById('message_status').innerHTML = 'Запущена в: ' + time
             document.getElementById('message_status').className = 'run'
             start_message(inner_text, banned)
+            Notifications.sendMessStartNotify();
         }
     };
     document.getElementById('send_letter_button').onclick = function() {
+        Notifications.sendLettersStartNotify;
         var inner_subject = document.getElementById('subject_input').value;
         var inner_text = document.getElementById('letter_input').value;
         var banned_val = document.getElementById('banned_input_letters').value;
@@ -148,6 +139,7 @@ window.onload = async function main() {
             document.getElementById('letters_status').innerHTML = 'Запущена в: ' + time;
             document.getElementById('letters_status').className = 'run';
             start_letter(inner_subject, inner_text, photo_id, banned);
+            Notifications.sendLettersStartNotify();
         }
     };   
 };
@@ -158,21 +150,6 @@ function like_man(id) {
     axios.get(url)
         .then(response => console.log('[Sender] like successs: ' + id))
         .catch(error => console.warn('[Sender] like failed'))
-};
-
-// send finish function
-function send_complete(type) {
-    var time = new Date().toLocaleTimeString().slice(0,-3);
-    if (type == 'messages') {
-        messages_sound.play();
-        document.getElementById('message_status').innerHTML = 'Завершена в: ' + time;
-        document.getElementById('message_status').className = 'finish';
-    } if (type == 'letters') {
-        letters_sound.play();
-        document.getElementById('letters_status').innerHTML = 'Завершена в: ' + time;
-        document.getElementById('letters_status').className = 'finish';
-    } 
-    else console.log('sound error');
 };
 
 // messages sender
@@ -207,7 +184,7 @@ function start_message(inner_text, banned){
         timer = timer + 1300;
     };
     time = (mans_array.length * 1.3) * 1000;
-    setTimeout(() => {send_complete('messages');}, time);
+    setTimeout(() => {Notifications.sendMessFinishNotify(mans_array.length);}, time);
 };
 
 // letters sender
@@ -272,5 +249,5 @@ function start_letter(inner_subject, inner_text, photo_id, banned) {
         timer = timer + 3000;
     };
     time = (mans_array.length * 1.3) * 1000;
-    setTimeout(() => {send_complete('letters');}, time);
+    setTimeout(() => {Notifications.sendLettersFinishNotify(mans_array.length);}, time);
 };
