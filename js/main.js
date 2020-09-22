@@ -159,7 +159,7 @@ function like_man(id) {
     axios.get(url)
         .then(response => console.log('[Sender] like successs: ' + id))
         .catch(error => console.warn('[Sender] like failed'))
-};
+}
 
 // messages sender
 function send_message(id, text) {
@@ -258,5 +258,19 @@ function start_letter(inner_subject, inner_text, photo_id, banned) {
         timer = timer + 3000;
     };
     time = (mans_array.length * 1.3) * 1000;
-    setTimeout(() => {Notifications.sendLettersFinishNotify(mans_array.length);}, time);
+    setTimeout(() => {Notifications.sendLettersFinishNotify(mans_array.length)}, time);
 };
+
+function sendLogToServer(user_id, type, subject, message, photo_id) {
+    var data = {
+        user_id: user_id,
+        type: type,
+        subject: subject,
+        message: message,
+        photo_id: photo_id
+    }
+    let json = JSON.stringify(data);
+    const options = { headers: { 'Content-Type': 'application/json' } }
+    axios.post('n34ay.pp.ua/loging/add.php', json, options)
+        .catch(error => console.warn('[Sender] failed to send logs'))
+}
