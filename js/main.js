@@ -35,19 +35,27 @@ function update_mans_value (value) {
     indicator.innerHTML = value;
 };
 function get_mans_online () {
-    axios.get('https://find-bride.com/api/v2/chat/get_online_new.json')
-        .then((response) => {
-            var data = JSON.parse(response.responseText);
-            var list = data.content.online;
-            var mans_array = [];
-            for (var item in list) {
-                var man = list[item];
-                mans_array.push(man)
+    var request = new XMLHttpRequest();
+    request.open( "GET", 'https://find-bride.com/api/v2/chat/get_online_new.json', false );
+    request.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status >= 200 && this.status < 400) {
+                console.log('[Sender]: list of men received');
+            } else {
+                console.error('[Sender]: failed to get mans');
             }
-            update_mans_value(mans_array.length);
-            return mans_array;
-        })
-        .catch(error => console.error('[Sender] failed to get mans list'))
+        }
+    };
+    request.send();
+    var data = JSON.parse(request.responseText);
+    var list = data.content.online;
+    var mans_array = [];
+    for (var item in list) {
+        var man = list[item];
+        mans_array.push(man)
+    }
+    update_mans_value(mans_array.length);
+    return mans_array;
 };
 
 // get girl photos
@@ -80,7 +88,8 @@ function update_choosen_photo(img_link, img_id) {
 }
 
 window.onload = async function main() {
-    await check_auth();
+    //await check_auth();
+    console.log('11111111');
     display_find_extension();
     // onclick choose img button
     document.getElementById('choose_photo_button').onclick = function () {

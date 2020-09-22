@@ -9,12 +9,12 @@
     "default_popup": "popup.html"
   },
   "content_scripts": [{
-    "css": [ "modal/modal.css" ],
-    "matches": ["https://find_bride.com/*"],
+    "css": [ "css/modal.css" ],
+    "matches": ["https://find-bride.com/*"],
     "js": [
-      "js/axios.min.js",
-      "js/display.js",
+      "lib/axios.min.js",
       "js/main.js",
+      "js/display.js",
       "js/notifications.js"
     ]
   }],
