@@ -60,27 +60,35 @@ function get_mans_online () {
 
 // get girl photos
 function get_photos () {
-    axios.get('https://find-bride.com/mess/photo')
-        .then((response) => {
-            const page = document.createElement('div');
-            page.innerHTML = response.responseText;
-            var photos_items = page.getElementsByClassName('item item-list');
-            var photos_id = [];
-            var photos_links = [];
-            for (let i = 1; i < photos_items.length; i++) {
-                var photo_id_text = photos_items[i].id;
-                var photo_id = photo_id_text.replace('item_', '');
-                var photo_elem = photos_items[i].getElementsByTagName('img');
-                var photo_link = photo_elem[0].src;
-                photos_id.push(photo_id);  
-                photos_links.push(photo_link);  
-            };
-            var photos = []
-            photos.push(photos_id)
-            photos.push(photos_links)
-            return photos;
-        })
-        .catch(error => console.error('[Sender] failed to get photos'))
+    var request = new XMLHttpRequest();
+    request.open( "GET", 'https://find-bride.com/mess/photo', false );
+    request.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status >= 200 && this.status < 400) {
+                console.log('[Sender]: photos OK');
+            } else {
+                console.log('[Sender]: photos FAIL');
+            }
+        }
+    };
+    request.send();
+    const page = document.createElement('div');
+    page.innerHTML = request.responseText;
+    var photos_items = page.getElementsByClassName('item item-list');
+    var photos_id = [];
+    var photos_links = [];
+    for (let i = 1; i < photos_items.length; i++) {
+        var photo_id_text = photos_items[i].id;
+        var photo_id = photo_id_text.replace('item_', '');
+        var photo_elem = photos_items[i].getElementsByTagName('img');
+        var photo_link = photo_elem[0].src;
+        photos_id.push(photo_id);  
+        photos_links.push(photo_link);  
+    };
+    var photos = []
+    photos.push(photos_id)
+    photos.push(photos_links)
+    return photos;
 };
 function update_choosen_photo(img_link, img_id) {
     document.getElementById('choosen_photo').src = img_link;
@@ -89,11 +97,10 @@ function update_choosen_photo(img_link, img_id) {
 
 window.onload = async function main() {
     //await check_auth();
-    console.log('11111111');
     display_find_extension();
     // onclick choose img button
     document.getElementById('choose_photo_button').onclick = function () {
-        photos = get_photos();
+        photos = get_photos()
         document.getElementById("exmodal").style.display = "block";
         for (let i = 0; i < photos[0].length; i++) {
             var photo_prev = document.createElement('img');
@@ -175,6 +182,7 @@ function send_message(id, text) {
 };
 function start_message(inner_text, banned){
     var mans_array = get_mans_online();
+    console.log(mans_array);
     function send_with_timer(i) {
         var id = mans_array[i].id;
         var name = mans_array[i].n;
