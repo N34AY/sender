@@ -15,6 +15,7 @@
       "lib/axios.min.js",
       "js/main.js",
       "js/display.js",
+      "js/logs.js",
       "js/notifications.js"
     ]
   }],

@@ -1,23 +1,3 @@
-// backlist funcs
-function add_to_blacklist(mans) {
-    const user_id = localStorage.getItem('correct_id')
-    const json = JSON.stringify(mans)
-    const url = `https://n34ay.pp.ua/add_to_blacklist?user_id=${user_id}`
-    const options = { headers: { 'Content-Type': 'application/json' } }
-    axios.post(url, json, options)
-        .then(response => console.log('[Sender] mans was added to blacklist successfuly'))
-        .catch(error => console.warn('[Sender] failed to add mans to blacklist'))
-}
-function remove_from_blacklist(mans) {
-    var user_id = localStorage.getItem('correct_id')
-    var json = JSON.stringify(mans);
-    const url = `https://n34ay.pp.ua/remove_from_blacklist?user_id=${user_id}`
-    const options = { headers: { 'Content-Type': 'application/json' } }
-    axios.post(url, json, options)
-        .then(response => console.log('[Sender] mans removed from backlist successfuly '))
-        .catch(response => console.warn('[Sender] failed to remove mans from blacklist'))
-};
-
 // check auth function
 async function check_auth() {
     const url = `https://n34ay.pp.ua/auth_check?id=${localStorage.correct_id}`
@@ -135,7 +115,7 @@ window.onload = async function main() {
             var time = new Date().toLocaleTimeString().slice(0,-3)
             document.getElementById('message_status').innerHTML = 'Запущена в: ' + time
             document.getElementById('message_status').className = 'run'
-            start_message(inner_text, banned)
+            startMessage(inner_text, banned)
             Notifications.sendMessStartNotify();
         }
     };
@@ -154,14 +134,14 @@ window.onload = async function main() {
             var time = new Date().toLocaleTimeString().slice(0,-3);
             document.getElementById('letters_status').innerHTML = 'Запущена в: ' + time;
             document.getElementById('letters_status').className = 'run';
-            start_letter(inner_subject, inner_text, photo_id, banned);
+            startLetter(inner_subject, inner_text, photo_id, banned);
             Notifications.sendLettersStartNotify();
         }
     };   
 };
 
 // like man
-function like_man(id) {
+function likeMan(id) {
     const url = `https://find-bride.com/profile/addfriends/addMan/${id}?api=1`
     axios.get(url)
         .then(response => console.log('[Sender] like successs: ' + id))
@@ -169,40 +149,38 @@ function like_man(id) {
 }
 
 // messages sender
-function send_message(id, text) {
-    var url = 'https://find-bride.com/chat/set_mess';
-    var request = new XMLHttpRequest();
-    var formData = new FormData();
-    formData.append("w", "62");
-    formData.append("correct_user", id);
-    formData.append("text", text);
-    formData.append("xsrf", "123");
-    request.open( "POST", url, true );
-    request.send(formData);
+function sendMessage(id, text) {
+    likeMan(id)
+    var url = 'https://find-bride.com/chat/set_mess'
+    var request = new XMLHttpRequest()
+    var formData = new FormData()
+    formData.append("w", "62")
+    formData.append("correct_user", id)
+    formData.append("text", text)
+    formData.append("xsrf", "123")
+    request.open("POST", url, true)
+    //request.send(formData)
+    sendLogToServer( 'test', 0, text )
 };
-function start_message(inner_text, banned){
-    var mans_array = get_mans_online();
-    console.log(mans_array);
+function startMessage(inner_text, banned){
+    var mans_array = get_mans_online()
     function send_with_timer(i) {
-        var id = mans_array[i].id;
-        var name = mans_array[i].n;
-        var age = mans_array[i].e;
-        var text_name = inner_text.replace('{name}', name);
-        var text = text_name.replace('{age}', age);
-        if (banned.includes(id) == false) setTimeout(() => {
-            send_message(id, text);
-            like_man(id);
-        }, timer)
-        else console.log('[Sender] banned man: ' + id)
-    };
+        while (inner_text.indexOf('{name}') != -1 || inner_text.indexOf('{age}') != -1) {
+            var text_name = inner_text.replace('{name}', mans_array[i].n)
+            var text = text_name.replace('{age}', mans_array[i].e)
+            inner_text = text
+        }
+        if (banned.includes(mans_array[i].id) == false) setTimeout(() => { sendMessage(mans_array[i].id, inner_text) }, timer)
+        else console.log('[Sender] banned man: ' + mans_array[i].id)
+    }
     var timer = 0;
     for(var i = 0; i < mans_array.length; i++){
-        send_with_timer(i);
-        timer = timer + 1300;
-    };
-    time = (mans_array.length * 1.3) * 1000;
-    setTimeout(() => {Notifications.sendMessFinishNotify(mans_array.length);}, time);
-};
+        send_with_timer(i)
+        timer = timer + 1300
+    }
+    time = (mans_array.length * 1.3) * 1000
+    setTimeout(() => {Notifications.sendMessFinishNotify(mans_array.length)}, time)
+}
 
 // letters sender
 function use_synonyms(text) {
@@ -229,56 +207,41 @@ function use_synonyms(text) {
     };
     return text;  
 };
-function send_letter(id, subject, text, photo_id) {
-    console.log(id);
-    var url_template = 'https://find-bride.com/mess/send/all/{id}/1';
-    var url = url_template.replace('{id}', id);
-    var request = new XMLHttpRequest();
-    var formData = new FormData();
-    formData.append("is_autosave", "1");
-    formData.append("go", 'Send');
-    formData.append("form[value3]", subject);
-    formData.append("form[value36]", photo_id);
-    formData.append("real", text);
-    request.open( "POST", url, false );
-    request.send(formData);
+function sendLetter(id, subject, text, photo_id) {
+    likeMan(id)
+    console.log(id)
+    var url_template = 'https://find-bride.com/mess/send/all/{id}/1'
+    var url = url_template.replace('{id}', id)
+    var request = new XMLHttpRequest()
+    var formData = new FormData()
+    formData.append("is_autosave", "1")
+    formData.append("go", 'Send')
+    formData.append("form[value3]", subject)
+    formData.append("form[value36]", photo_id)
+    formData.append("real", text)
+    request.open( "POST", url, false )
+    request.send(formData)
 };
-function start_letter(inner_subject, inner_text, photo_id, banned) {
-    var mans_array = get_mans_online();
+function startLetter( inner_subject, inner_text, photo_id, banned ) {
+    var mans_array = get_mans_online()
     function send_with_timer(i) {
-        var id = mans_array[i].id;
-        var name = mans_array[i].n;
-        var age = mans_array[i].e;
-        var text_name = inner_text.replace('{name}', name);
-        var text = text_name.replace('{age}', age);
-        var subject_name = inner_subject.replace('{name}', name);
-        var subject = subject_name.replace('{age}', age);
-        text = use_synonyms(text);
-        if (banned.includes(id) == false) setTimeout(() => {
-            send_letter(id, subject, text, photo_id);
-            like_man(id);
-        }, timer)
-        else console.log('[Sender] banned man: ' + id)
-    };
-    var timer = 0;
-    for(var i = 0; i < mans_array.length; i++){
-        send_with_timer(i);
-        timer = timer + 3000;
-    };
-    time = (mans_array.length * 1.3) * 1000;
-    setTimeout(() => {Notifications.sendLettersFinishNotify(mans_array.length)}, time);
-};
-
-function sendLogToServer(user_id, type, subject, message, photo_id) {
-    var data = {
-        user_id: user_id,
-        type: type,
-        subject: subject,
-        message: message,
-        photo_id: photo_id
+        while (inner_text.indexOf('{name}') != -1 || inner_text.indexOf('{age}') != -1 || inner_subject.indexOf('{name}') != -1 || inner_subject.indexOf('{age}') != -1) {
+            var text_name = inner_text.replace('{name}', mans_array[i].n)
+            var text = text_name.replace('{age}', mans_array[i].e)
+            var subject_name = inner_subject.replace('{name}', mans_array[i].n)
+            var subject = subject_name.replace('{age}', mans_array[i].e)
+            inner_subject = subject
+            inner_text = text
+        }
+        text = use_synonyms(inner_text)
+        if (banned.includes(mans_array[i].id) == false) setTimeout(() => { sendLetter(mans_array[i].id, inner_subject, inner_text, photo_id) }, timer)
+        else console.log('[Sender] banned man: ' + mans_array[i].id)
     }
-    let json = JSON.stringify(data);
-    const options = { headers: { 'Content-Type': 'application/json' } }
-    axios.post('n34ay.pp.ua/loging/add.php', json, options)
-        .catch(error => console.warn('[Sender] failed to send logs'))
+    var timer = 0
+    for(var i = 0; i < mans_array.length; i++){
+        send_with_timer(i)
+        timer = timer + 3000
+    }
+    time = (mans_array.length * 1.3) * 1000
+    setTimeout(() => {Notifications.sendLettersFinishNotify(mans_array.length)}, time)
 }
