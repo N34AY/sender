@@ -16,6 +16,7 @@
       "js/main.js",
       "js/display.js",
       "js/logs.js",
+      "js/blacklist.js",
       "js/notifications.js"
     ]
   }],
