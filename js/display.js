@@ -22,7 +22,7 @@ const extension_window = `
     <input id='send_letter_button' value='Запуск' type='button'>
     <h5 id='letters_status'>Статус: <span id='letter_status'>Не запущено</span></h5>
     <img class='choosen_image' id='choosen_photo' data-id='none'>
-</div>`;
+</div>`
 const extension_modal = `
 <div id='exmodal'>
     <div id='exmodal_header'>
@@ -31,7 +31,7 @@ const extension_modal = `
     </div>
     <div id='exmodal_content'>
     </div>
-</div>`;
+</div>`
 const auth_failed_window = `
 <div class='auth_failed'>
     <hr>
@@ -39,19 +39,18 @@ const auth_failed_window = `
     <h4>Свяжитесь с Вашим<h4>
     <h4>Администратором<h4>
     <hr>
-</div>`;
+</div>`
 // display extension window function
 function display_find_extension () {
-    var menu_elems = document.getElementsByClassName('block-menu-container clearfix');
-    var last_menu_elem = menu_elems[menu_elems.length - 1];
-    last_menu_elem.insertAdjacentHTML('afterBegin', extension_window);
-    get_mans_online(); // update mans value
-    // add extension modal window 
-    var place = document.getElementsByTagName('body')[0];
-    place.insertAdjacentHTML('afterBegin', extension_modal);
-};
+    var menu_elems = document.getElementsByClassName('block-menu-container clearfix')
+    var last_menu_elem = menu_elems[menu_elems.length - 1]
+    last_menu_elem.insertAdjacentHTML('afterBegin', extension_window)
+    get_mans_online()
+    var place = document.getElementsByTagName('body')[0]
+    place.insertAdjacentHTML('afterBegin', extension_modal)
+}
 function display_auth_failed_info () {
-    var menu_elems = document.getElementsByClassName('block-menu-container clearfix');
-    var last_menu_elem = menu_elems[menu_elems.length - 1];
-    last_menu_elem.insertAdjacentHTML('afterBegin', auth_failed_window);
-};
+    var menu_elems = document.getElementsByClassName('block-menu-container clearfix')
+    var last_menu_elem = menu_elems[menu_elems.length - 1]
+    last_menu_elem.insertAdjacentHTML('afterBegin', auth_failed_window)
+}

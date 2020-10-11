@@ -1,4 +1,4 @@
-window.onload = function () {
+function displayBanButtons () {
     if ( (window.location.href).indexOf("find-bride.com/chat", 0) != -1 ) {
         getUserBlacklist()
         var user_id = localStorage.getItem('correct_id')
