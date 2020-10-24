@@ -12,9 +12,9 @@ async function check_auth(email, password) {
     await axios.post('https://ancrush.com/auth/api', json, options)
     .then((response) => {
         if (response.data.status == 'success') {
-            display_find_extension()
             localStorage.setItem('extoken', response.data.token)
             localStorage.setItem('exemail', email)
+            document.location.reload()
         } else display_auth_failed_info()
     })
     .catch(response => display_auth_failed_info())
@@ -97,7 +97,7 @@ window.onload = async function main() {
             await check_auth(email, password)
         }
     }
-    displayBanButtons
+    // displayBanButtons
     // onclick choose img button
     document.getElementById('choose_photo_button').onclick = function () {
         photos = get_photos()

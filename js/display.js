@@ -1,7 +1,7 @@
 const loginWindow = `
 <div class='ex_login'>
     <hr>
-    <h3>Войдите в Рассылку<h3>
+    <h3>Авторизируйтесь<h3>
     <p class='exlabel'>Введите email</p>
     <input id='exemail' type='text' placeholder='email'>
     <p class='exlabel'>Введите пароль</p>
