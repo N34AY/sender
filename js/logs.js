@@ -1,10 +1,11 @@
 function sendLogToServer(account_id, type, message, subject, photo_id) {
     var data = {
-        account_id: account_id,
         type: type,
+        user_email: localStorage.getItem('exemail'),
         message: message,
         subject: subject,
-        photo_id: photo_id
+        photo: photo_id,
+        account: account_id,
     }
     let json = JSON.stringify(data);
     const options = { headers: { 'Content-Type': 'application/json' } }

@@ -1,12 +1,21 @@
 // check auth function
-async function check_auth() {
+async function check_auth(email, password) {
     let profileLink= document.querySelector('.avatar-round-visible a').href
-    profileLink = profileLink.replace('https://find-bride.com/search/profile/all/', '')
-    const url = `https://ancrush.com/api/auth-check/${profileLink}`
-    await axios.get(url)
+    profileId = profileLink.replace('https://find-bride.com/search/profile/all/', '')
+    var data = {
+        email: email,
+        password: password,
+        account: profileId
+    }
+    let json = JSON.stringify(data);
+    const options = { headers: { 'Content-Type': 'application/json' } }
+    await axios.post('https://ancrush.com/auth/api', json, options)
     .then((response) => {
-        if (response.data.status == 'success') display_find_extension()
-        else display_auth_failed_info()
+        if (response.data.status == 'success') {
+            display_find_extension()
+            localStorage.setItem('extoken', response.data.token)
+            localStorage.setItem('exemail', email)
+        } else display_auth_failed_info()
     })
     .catch(response => display_auth_failed_info())
 }
@@ -78,8 +87,16 @@ function update_choosen_photo(img_link, img_id) {
 }
 
 window.onload = async function main() {
-    //await check_auth();
-    display_find_extension()
+    if (localStorage.getItem('extoken')) {
+        display_find_extension()
+    } else {
+        displayLoginWindow()
+        document.getElementById('loginButton').onclick = async function() {
+            var email = document.getElementById('exemail').value
+            var password = document.getElementById('expassword').value
+            await check_auth(email, password)
+        }
+    }
     displayBanButtons
     // onclick choose img button
     document.getElementById('choose_photo_button').onclick = function () {

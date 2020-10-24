@@ -1,3 +1,23 @@
+const loginWindow = `
+<div class='ex_login'>
+    <hr>
+    <h3>Войдите в Рассылку<h3>
+    <p class='exlabel'>Введите email</p>
+    <input id='exemail' type='text' placeholder='email'>
+    <p class='exlabel'>Введите пароль</p>
+    <input id='expassword' type='password' placeholder='password'>
+    <br>
+    <input id='loginButton'value='Войти' type='button'>
+    <hr>
+</div>`
+const auth_failed_window = `
+<div class='auth_failed'>
+    <hr>
+    <h3>Ошибка авторизации<h3>
+    <h4>Свяжитесь с Вашим<h4>
+    <h4>Администратором<h4>
+    <hr>
+</div>`
 const extension_window = `
 <div id='extension'>
     <hr>
@@ -32,15 +52,12 @@ const extension_modal = `
     <div id='exmodal_content'>
     </div>
 </div>`
-const auth_failed_window = `
-<div class='auth_failed'>
-    <hr>
-    <h3>Ошибка авторизации<h3>
-    <h4>Свяжитесь с Вашим<h4>
-    <h4>Администратором<h4>
-    <hr>
-</div>`
 // display extension window function
+function displayLoginWindow () {
+    var menu_elems = document.getElementsByClassName('block-menu-container clearfix')
+    var last_menu_elem = menu_elems[menu_elems.length - 1]
+    last_menu_elem.insertAdjacentHTML('afterBegin', loginWindow)
+}
 function display_find_extension () {
     var menu_elems = document.getElementsByClassName('block-menu-container clearfix')
     var last_menu_elem = menu_elems[menu_elems.length - 1]
