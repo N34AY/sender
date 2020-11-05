@@ -1,5 +1,4 @@
 {
-	"manifest_version": 2,
 	"name": "Sender",
 	"description": "Sender",
 	"version": "1.0.0",
@@ -8,24 +7,38 @@
     "64": "64.png",
     "32": "32.png"
   },
-	"browser_action": {
-		"default_icon": "64.png",
-    "default_popup": "popup.html"
-  },
   "content_scripts": [{
     "css": [ "css/modal.css" ],
     "matches": ["https://find-bride.com/*"],
     "js": [
       "lib/axios.min.js",
+      "lib/sweetalert2@10.js",
+      "modules/auth/auth.js",
       "js/main.js",
-      "js/display.js",
+      "modules/extension/extension.js",
+      "modules/getMans/getMans.js",
+      "modules/girlPhotos/girlPhotos.js",
+      "modules/sendLetters/sendLetters.js",
+      "modules/sendMessage/sendMessage.js",
+      "modules/liker/liker.js",
       "js/logs.js",
       "js/blacklist.js",
       "js/notifications.js"
     ]
   }],
     "background": {
-        "scripts": ["js/background.js"]
+        "scripts": [
+          "js/background.js"
+        ]
     },
-  "permissions": ["activeTab", "notifications"]
+  "permissions": ["activeTab", "notifications"],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "32.png",
+      "48": "64.png",
+      "128": "128.png"
+    }
+  },
+  "manifest_version": 2
 }
