@@ -2,12 +2,16 @@ body {
     min-width: 600px;
 }
 
+#mainWindow {
+    display: block;
+}
+
 #innerInfo {
     text-align: center;
     margin: 20px;
 }
 
-form {
+.form {
     display: none;
 }
 
@@ -23,9 +27,26 @@ form {
     margin-top: 20px;
 }
 
+#messagesSendStatus {
+    font-size: 20px;
+}
+
+.statusBar {
+    display: none;
+}
+
+.errorBar {
+    display: none;
+}
+
 #girlImgBlock {
     width: 100px;
     height: 100px;
+}
+
+.girlPhoto {
+    width: 50px;
+    height: 50px;
 }
 
 img {

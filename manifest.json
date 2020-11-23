@@ -7,28 +7,22 @@
     "64": "64.png",
     "32": "32.png"
   },
-  "content_scripts": [{
-    "css": [ "css/modal.css" ],
-    "matches": ["https://find-bride.com/*"],
-    "js": [
-      "lib/axios.min.js",
-      "lib/sweetalert2@10.js",
-      "modules/auth/auth.js",
-      "js/main.js",
-      "modules/extension/extension.js",
-      "modules/getMans/getMans.js",
-      "modules/girlPhotos/girlPhotos.js",
-      "modules/sendLetters/sendLetters.js",
-      "modules/sendMessage/sendMessage.js",
-      "modules/liker/liker.js",
-      "js/logs.js",
-      "js/blacklist.js",
-      "js/notifications.js"
-    ]
-  }],
+  "content_scripts": [
+    {
+      "css": [ "css/modal.css" ],
+      "matches": ["https://find-bride.com/*"],
+      "js": [
+        "lib/axios.min.js",
+        "lib/sweetalert2@10.js",
+        "js/blacklist.js"
+      ]
+    }
+  ],
     "background": {
         "scripts": [
-          "js/background.js"
+          "lib/axios.min.js",
+          "js/background.js",
+          "modules/notifications/notifications.js"
         ]
     },
   "permissions": ["activeTab", "notifications"],
