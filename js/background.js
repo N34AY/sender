@@ -151,7 +151,8 @@ async function getGirlPhotos () {
 chrome.runtime.onConnect.addListener(function (port) {
 	console.assert(port.name == 'messagesSenderService')
 	port.onMessage.addListener(async function (senderService) {
-/* 		if (senderService.sendType == 'checkAuth') {
+	/* 	
+		if (senderService.sendType == 'checkAuth') {
 			var profileId = senderService.profileId
 			var email = senderService.email
 			var password = senderService.password
@@ -172,7 +173,8 @@ chrome.runtime.onConnect.addListener(function (port) {
 					port.postMessage({ message: error, auth: false })
 				}
 			} else port.postMessage({ message: 'Неправильный логин или пароль', auth: false })
-		} */
+		} 
+	*/
 
 		var mans = await getMans()
 		var sendsCount = 0
