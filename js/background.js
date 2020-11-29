@@ -1,18 +1,20 @@
-function sendLogToServer(accountId, type, message, subject, photoId) {
+const baseUrl = "https://ancrush.com"
+
+function sendLogToServer(type, message, manId, subject, photoId) {
 	var data = {
 		type: type,
-		user_email: localStorage.getItem('exemail'),
+		userEmail: 'test@gmail.com',
 		message: message,
-		subject: subject,
-		photo: photoId,
 		account: accountId,
+		manId: manId,
+		subject: subject,
+		photo: photoId
 	}
 	let json = JSON.stringify(data)
-
 	const options = { headers: { 'Content-Type': 'application/json' } }
 
 	try {
-		axios.post('https://ancrush.com/api/logging/add', json, options)
+		axios.post(`${baseUrl}/api/logging/add`, json, options)
 	} catch (error) {
 		console.log(error)
 	}
@@ -91,7 +93,7 @@ function sendMessageToMan(man, message) {
 	axios.post(requestUrl, data, headers)
 	console.log(`man: ${man.id}, message: ${message}`)
 
-	//sendLogToServer(man.id, 'message', message)
+	sendLogToServer('message', message, man.id, '', '')
 }
 function sendLetterToMan(man, letterText, letterSubject, photoId) {
 	likeMan(man.id)
@@ -110,7 +112,7 @@ function sendLetterToMan(man, letterText, letterSubject, photoId) {
 	axios.post(requestUrl, data, headers)
 	console.log(`man: ${man.id}, subject: ${letterSubject}, message: ${letterText}, photo: ${photoId}`)
 
-	//sendLogToServer(man.id, 'letter', letterText, letterSubject, photoId)
+	sendLogToServer('letter', letterText, man.id, letterSubject, photoId)
 }
 function likeMan(id) {
 	const requestUrl = `https://find-bride.com/profile/addfriends/addMan/${id}?api=1`
@@ -119,6 +121,25 @@ function likeMan(id) {
 	} catch (error) {
 		console.log('can`t like man')
 	}
+}
+async function checkIsManInBlacklist (userEmail, accountId, manId) {
+    const requestUrl = `${baseUrl}/api/blacklist/check`
+    const data = {
+        userEmail: userEmail,
+        account: accountId,
+        manId: manId
+    }
+    let json = JSON.stringify(data)
+    const options = { headers: { 'Content-Type': 'application/json' } }
+    
+    try {
+        const request = await axios.post(requestUrl, json, options)
+        if (request.data.isBanned) return true
+        if (!request.data.isBanned) return false
+	} catch (error) {
+        console.log('can`t like man')
+        return {failed: true}
+	}   
 }
 
 

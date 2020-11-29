@@ -1,57 +1,125 @@
-function displayBanButtons () {
-    if ( (window.location.href).indexOf("find-bride.com/chat", 0) != -1 ) {
-        getUserBlacklist()
-        var user_id = localStorage.getItem('correct_id')
-        var manIdElem = document.getElementById('correct_user_profile').href
-        var manId = manIdElem.replace("https://find-bride.com/search/man_profile/all/", "")
-        if (condition) {
-            
-        } else {
-            
+function getAccountId () {
+    var profileLink = document.querySelector('.avatar-round-visible a').href
+    profileId = profileLink.replace('https://find-bride.com/search/profile/all/', '')
+    return profileId
+}
+
+const currentUrl = window.location.href
+const baseUrl = "https://ancrush.com"
+const userEmail = 'dfdfdfdfd@gmail.com'
+const accountId = getAccountId()
+
+
+async function displayBanButtonOnManProfile (manId) {
+    const profileSidebar = document.getElementsByClassName('profile-sidebar')
+    const isBanned = await checkIsManInBlacklist (userEmail, accountId, manId)
+
+    var banButton = document.createElement('button')
+    if (isBanned) {
+        banButton.classList = 'ban_btn btn btn-primary'
+        banButton.innerHTML = 'UNBAN'
+    }
+    if (!isBanned) {
+        banButton.classList = 'ban_btn btn btn-danger'
+        banButton.innerHTML = 'BAN'
+    }
+    profileSidebar[0].appendChild(banButton)
+}
+async function displayBanButtonInChat (manId) {
+    const chatSidebar = document.getElementsByClassName('main_top_in')
+    const isBanned = await checkIsManInBlacklist (userEmail, accountId, manId)
+
+    var banButton = document.createElement('button')
+    if (isBanned) {
+        banButton.classList = 'ban_btn btn btn-primary'
+        banButton.innerHTML = 'UNBAN'
+    }
+    if (!isBanned) {
+        banButton.classList = 'ban_btn btn btn-danger'
+        banButton.innerHTML = 'BAN'
+    }
+    chatSidebar[1].appendChild(banButton)
+}
+
+if (currentUrl.indexOf('search/man_profile', 0) != -1) {
+    const manId = currentUrl.replace('https://find-bride.com/search/man_profile/all/', '')
+    displayBanButtonOnManProfile(manId)
+    document.onclick = function(event) {
+        var banButton = document.getElementsByClassName('ban_btn')[0]
+
+        if (event.target.classList.contains('btn-danger')) {
+            addManToBlacklist(userEmail, accountId, manId)
+            banButton.classList = 'ban_btn btn btn-primary'
+            banButton.innerHTML = 'UNBAN'
         }
-        var buttonWhenBanned = `<div><span class='bl_icon_ban'></div>`
-        var buttonWhenUnBanned = `<div><span class='bl_icon_ban'></div>`
-        e[0].insertAdjacentHTML('beforeend', button)
-        var manIdElem = document.getElementById('correct_user_profile').href
-        var manId = manIdElem.replace("https://find-bride.com/search/man_profile/all/", "")
-
+        if (event.target.classList.contains('btn-primary')) {
+            removeManFromBlacklist (userEmail, accountId, manId)
+            banButton.classList = 'ban_btn btn btn-danger'
+            banButton.innerHTML = 'BAN'
+        }
     }
 }
-// backlist funcs
-function add_to_blacklist(mans) {
+if (currentUrl.indexOf('find-bride.com/chat', 0) != -1) {
+    let manLink = document.getElementById('correct_user_profile').href
+    let manId = ''
+    if (manLink) manId = manLink.replace('/search/man_profile/all/', '')
+    displayBanButtonInChat(manId)
+}
+
+
+
+
+
+async function addManToBlacklist (userEmail, accountId, manId) {
+    const requestUrl = `${baseUrl}/api/blacklist/add`
     const data = {
-        "user_id": user_id,
-        "mans": mans
+        userEmail: userEmail,
+        account: accountId,
+        manId: manId
     }
-    const json = JSON.stringify(data)
-    const url = `http://agency-stats.pp.ua/api/blacklist/add`
+    let json = JSON.stringify(data)
     const options = { headers: { 'Content-Type': 'application/json' } }
-    axios.post(url, json, options)
-        .then(response => console.log('[Sender] mans was added to blacklist successfuly'))
-        .catch(error => console.warn('[Sender] failed to add mans to blacklist'))
-}
-function remove_from_blacklist(mans) {
-    var json = JSON.stringify(mans)
-    const url = `http://agency-stats.pp.ua/api/blacklist/del`
-    const options = { headers: { 'Content-Type': 'application/json' } }
-    axios.post(url, json, options)
-        .then((response) => {
-            if (response.data.status == 'success') display_find_extension()
-            else display_auth_failed_info()
-        })
-        .catch(response => console.warn('[Sender] failed to remove mans from blacklist'))
+    
+    try {
+        const request = await axios.post(requestUrl, json, options)
+	} catch (error) {
+		console.log('can`t like man')
+	}   
 }
 
-function getUserBlacklist() {
-    const url = `https://agency-stats.pp.ua/api/blacklist/44533`
-    axios.get(url)
-        .then((response) => {
-            if (response.data.status == 'success') {
-                for (const man in response.data.mans) {
-                    console.log(man)
-                }
-            }
-            else console.log('fdfd')
-        })
-        .catch(response => console.warn('[Sender] failed to remove mans from blacklist'))
+async function removeManFromBlacklist (userEmail, accountId, manId) {
+    const requestUrl = `${baseUrl}/api/blacklist/remove`
+    const data = {
+        userEmail: userEmail,
+        account: accountId,
+        manId: manId
+    }
+    let json = JSON.stringify(data)
+    const options = { headers: { 'Content-Type': 'application/json' } }
+    
+    try {
+		const request = await axios.post(requestUrl, json, options)
+	} catch (error) {
+		console.log('can`t like man')
+	}   
+}
+
+async function checkIsManInBlacklist (userEmail, accountId, manId) {
+    const requestUrl = `${baseUrl}/api/blacklist/check`
+    const data = {
+        userEmail: userEmail,
+        account: accountId,
+        manId: manId
+    }
+    let json = JSON.stringify(data)
+    const options = { headers: { 'Content-Type': 'application/json' } }
+    
+    try {
+        const request = await axios.post(requestUrl, json, options)
+        if (request.data.isBanned) return true
+        if (!request.data.isBanned) return false
+	} catch (error) {
+        console.log('can`t like man')
+        return {failed: true}
+	}   
 }
