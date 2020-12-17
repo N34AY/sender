@@ -1,0 +1,15 @@
+.ex_btn {
+    width: 100%;
+    margin-top: 10px;
+    color: white !important;
+}
+.note_card {
+    border: 2px ridge rgba(22,96,164,0.50);
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+.note_del_btn {
+}

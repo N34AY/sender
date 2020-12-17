@@ -13,15 +13,27 @@
       "matches": ["https://find-bride.com/*"],
       "js": [
         "lib/axios.min.js",
+        "lib/sweetalert2@10.js"
+      ]
+    },
+    {
+      "css": [ "css/main.css" ],
+      "matches": ["https://find-bride.com/search/man_profile/all/*"],
+      "js": [
+        "lib/axios.min.js",
         "lib/sweetalert2@10.js",
-        "js/blacklist.js"
+        "front/blacklist.js",
+        "front/notes.js"
       ]
     }
   ],
     "background": {
         "scripts": [
           "lib/axios.min.js",
+          "config.js",
           "js/background.js",
+          "background/notes.js",
+          "background/blacklist.js",
           "modules/notifications/notifications.js"
         ]
     },
