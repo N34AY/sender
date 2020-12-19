@@ -1,15 +1,3 @@
-function getManId() {
-  const windowUrl = window.location.href
-  manId = windowUrl.replace('https://find-bride.com/search/man_profile/all/', '')
-  return manId
-}
-function getAccountId() {
-  const profileLink = document.querySelector('.avatar-round-visible a').href
-  account = profileLink.replace('https://find-bride.com/search/profile/all/', '')
-  return account
-}
-
-
 function displayNotesButton() {
   const profileSidebar = document.getElementsByClassName('profile-sidebar')
   const notesButton = `<button type="button" id="allNotesBtn" class="ex_btn btn btn-primary">
@@ -26,8 +14,6 @@ function displayAddNoteButton() {
                         </button>`
   profileSidebar[0].insertAdjacentHTML("beforeend", addNoteButton)
 }
-
-
 
 
 displayNotesButton()
@@ -67,7 +53,6 @@ document.getElementById('allNotesBtn').onclick = function() {
       let noteCard = `<div class="note_card">
                         <p>User: ${note.userEmail}</p>
                         <p>Created: ${date.toLocaleString()}</p>
-                        <p>Message:</p>
                         <p>Message: ${note.message}</p>
                         <button type="button" data-id="${note.id}" class="note_del_btn btn btn-danger">
                           <i class="fa fa-trash" aria-hidden="true"></i>

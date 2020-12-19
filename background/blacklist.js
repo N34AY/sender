@@ -41,7 +41,7 @@ async function checkIsBanned(userEmail, accountId, manId) {
     if (request.data.isBanned) return { banStatus: "banned" }
     if (!request.data.isBanned) return { banStatus: "unbanned" }
   } catch (error) {
-    alert('Can`t check man ban status!')
+    alert('Failed to check man ban status!')
   }
 }
 

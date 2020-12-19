@@ -9,19 +9,17 @@
   },
   "content_scripts": [
     {
-      "css": [ "css/modal.css" ],
-      "matches": ["https://find-bride.com/*"],
-      "js": [
-        "lib/axios.min.js",
-        "lib/sweetalert2@10.js"
-      ]
-    },
-    {
       "css": [ "css/main.css" ],
-      "matches": ["https://find-bride.com/search/man_profile/all/*"],
+      "matches": ["*://find-bride.com/*"],
       "js": [
         "lib/axios.min.js",
         "lib/sweetalert2@10.js",
+        "front/ids.js"
+      ]
+    },
+    {
+      "matches": ["*://find-bride.com/search/man_profile/all/*"],
+      "js": [
         "front/blacklist.js",
         "front/notes.js"
       ]
@@ -31,13 +29,19 @@
         "scripts": [
           "lib/axios.min.js",
           "config.js",
-          "js/background.js",
+          "background/sender/invites.js",
+          "background/sender/letters.js",
+          "background/sender/likes.js",
+          "background/sender/logs.js",
+          "background/sender/mans.js",
+          "background/sender/photos.js",
+          "background/sender/editor.js",
           "background/notes.js",
           "background/blacklist.js",
           "modules/notifications/notifications.js"
         ]
     },
-  "permissions": ["activeTab", "notifications"],
+  "permissions": ["activeTab", "notifications", "tabs"],
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
