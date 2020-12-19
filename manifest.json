@@ -38,7 +38,7 @@
           "background/sender/editor.js",
           "background/notes.js",
           "background/blacklist.js",
-          "modules/notifications/notifications.js"
+          "background/notifications.js"
         ]
     },
   "permissions": ["activeTab", "notifications", "tabs"],
